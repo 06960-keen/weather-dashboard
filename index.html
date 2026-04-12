@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Weather Dashboard</title>
+  <style>
+    body {
+      font-family: Arial;
+      background: #111;
+      color: #fff;
+      text-align: center;
+    }
+    .card {
+      background: #222;
+      margin: 10px;
+      padding: 20px;
+      border-radius: 10px;
+      display: inline-block;
+      width: 200px;
+    }
+    h2 { margin: 0; }
+  </style>
+</head>
+<body>
+
+<h1>🌦 Weather Dashboard</h1>
+
+<div class="card">
+  <h2>Temp</h2>
+  <p id="temp">--</p>
+</div>
+
+<div class="card">
+  <h2>Humidity</h2>
+  <p id="humidity">--</p>
+</div>
+
+<div class="card">
+  <h2>PM2.5</h2>
+  <p id="pm25">--</p>
+</div>
+
+<div class="card">
+  <h2>UV</h2>
+  <p id="uv">--</p>
+</div>
+
+<hr>
+
+<h2>🔮 Prediction</h2>
+
+<div class="card">
+  <h2>Temp</h2>
+  <p id="pred_temp">--</p>
+</div>
+
+<div class="card">
+  <h2>Humidity</h2>
+  <p id="pred_humidity">--</p>
+</div>
+
+<div class="card">
+  <h2>PM2.5</h2>
+  <p id="pred_pm25">--</p>
+</div>
+
+<div class="card">
+  <h2>UV</h2>
+  <p id="pred_uv">--</p>
+</div>
+
+<hr>
+
+<h2>💡 Recommendation</h2>
+<p id="rec">--</p>
+
+<script>
+function updateUI(data) {
+  document.getElementById("temp").innerText = data.temp;
+  document.getElementById("humidity").innerText = data.humidity;
+  document.getElementById("pm25").innerText = data.pm25;
+  document.getElementById("uv").innerText = data.uv;
+
+  document.getElementById("pred_temp").innerText = data.pred_temp;
+  document.getElementById("pred_humidity").innerText = data.pred_humidity;
+  document.getElementById("pred_pm25").innerText = data.pred_pm25;
+  document.getElementById("pred_uv").innerText = data.pred_uv;
+
+  document.getElementById("rec").innerText = data.rec1;
+}
+
+async function fetchData() {
+  try {
+    const res = await fetch("https://weatherproject2026-default-rtdb.asia-southeast1.firebasedatabase.app/data.json");
+    const data = await res.json();
+
+    if (data) {
+      updateUI(data);
+    }
+  } catch (err) {
+    console.log("Error:", err);
+  }
+}
+
+setInterval(fetchData, 2000);
+
+fetchData()
+
+</script>
+
+</body>
+</html>
