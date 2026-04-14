@@ -48,7 +48,7 @@
 
 <hr>
 
-<h2>🔮 Prediction</h2>
+<h2>Prediction</h2>
 
 <div class="card">
   <h2>Temp</h2>
@@ -72,20 +72,21 @@
 
 <hr>
 
-<h2>💡 Recommendation</h2>
+<h2>Recommendation</h2>
 <p id="rec">--</p>
 
 <script>
 function getWeatherText(data) {
   if (data.pm25 > 100) return "Very polluted 😷";
-  if (data.pm25 > 50) return "Polluted";
+  if (data.pm25 > 50) return "Polluted 🌫️";
 
-  if (data.uv > 8) return "Very sunny ☀️";
-  if (data.uv > 5) return "Sunny";
+  if (data.uv > 11) return "Extreme UV/ Very hot 🌡️🔥";
+  if (data.uv > 5) return "Sunny ☀️";
 
-  if (data.humidity > 80) return "Humid / cloudy ☁️";
+  if (data.humidity > 60) return "High humid / cloudy ☁️";
+  if (data.humidity > 80) return "Rainy 🌧️";
 
-  return "Normal weather 🙂";
+  return "Normal weather";
 }
 function updateUI(data) {
   document.getElementById("temp").innerText = data.temp;
