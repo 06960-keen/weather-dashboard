@@ -4,7 +4,7 @@
   <title>Weather Dashboard</title>
   <style>
     body {
-      font-family: Arial;
+      font-family: Georgia;
       background: #111;
       color: #fff;
       text-align: center;
@@ -73,7 +73,20 @@
 <h2>💡 Recommendation</h2>
 <p id="rec">--</p>
 
+<h2 id="weatherText">--</h2>
+
 <script>
+function getWeatherText(data) {
+  if (data.pm25 > 100) return "Very polluted 😷";
+  if (data.pm25 > 50) return "Polluted";
+
+  if (data.uv > 8) return "Very sunny ☀️";
+  if (data.uv > 5) return "Sunny";
+
+  if (data.humidity > 80) return "Humid / cloudy ☁️";
+
+  return "Normal weather 🙂";
+}
 function updateUI(data) {
   document.getElementById("temp").innerText = data.temp;
   document.getElementById("humidity").innerText = data.humidity;
@@ -95,6 +108,7 @@ async function fetchData() {
 
     if (data) {
       updateUI(data);
+      document.getElementById("weatherText").innerText = getWeatherText(data);
     }
   } catch (err) {
     console.log("Error:", err);
