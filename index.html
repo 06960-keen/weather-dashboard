@@ -80,11 +80,14 @@ function getWeatherText(data) {
   if (data.pm25 > 100) return "Very polluted 😷";
   if (data.pm25 > 50) return "Polluted 🌫️";
 
-  if (data.uv > 11) return "Extreme UV/ Very hot 🌡️🔥";
-  if (data.uv > 5) return "Sunny ☀️";
+  if (data.uv > 25) return "Extreme UV/ Very hot 🌡️🔥";
+  if (data.uv > 15) return "Sunny ☀️";
 
   if (data.humidity > 60) return "High humid / cloudy ☁️";
   if (data.humidity > 80) return "Rainy 🌧️";
+
+  if (data.temp > 35) return "Extreme UV/ Very hot 🌡️🔥";
+  if (data.temp < 27) return "Chilly 🌨️"
 
   return "Normal weather";
 }
