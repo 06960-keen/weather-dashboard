@@ -77,20 +77,43 @@
 
 <script>
 function getWeatherText(data) {
-  if (data.pm25 > 100) return "Very polluted 😷";
-  if (data.pm25 > 50) return "Polluted 🌫️";
+  let labels = [];
 
-  if (data.uv > 25) return "Extreme UV/ Very hot 🌡️🔥";
-  if (data.uv > 15) return "Sunny ☀️";
+  // 1️⃣ Rain
+  if (data.humidity > 80 && data.temp < 30 && data.uv < 20)
+    labels.push("🌧️ Rainy / bring umbrella");
 
-  if (data.humidity > 60) return "High humid / cloudy ☁️";
-  if (data.humidity > 80) return "Rainy 🌧️";
+  // 2️⃣ Air quality
+  if (data.pm25 > 100)
+    labels.push("😷 Very polluted");
+  else if (data.pm25 > 50)
+    labels.push("😷 Polluted");
 
-  if (data.temp > 35) return "Extreme UV/ Very hot 🌡️🔥";
-  if (data.temp < 27) return "Chilly 🌨️"
+  // 3️⃣ UV
+  if (data.uv > 25)
+    labels.push("🌡️🔥 Extreme UV / very hot");
+  else if (data.uv > 15)
+    labels.push("☀️ Sunny");
 
-  return "Normal weather";
+  // 4️⃣ Temperature
+  if (data.temp > 35)
+    labels.push("💧 Stay hydrated");
+  else if (data.temp < 27)
+    labels.push("🧥 Chilly / wear warm clothes");
+
+  // 5️⃣ Humidity / cloudy
+  if (data.humidity > 60)
+    labels.push("☁️ High humidity / cloudy");
+
+  // Default
+  if (labels.length == 0)
+    labels.push("🙂 Normal weather");
+
+  // Join multiple labels
+  return labels.join(" | ");
 }
+
+// Update UI
 function updateUI(data) {
   document.getElementById("temp").innerText = data.temp;
   document.getElementById("humidity").innerText = data.humidity;
@@ -102,27 +125,22 @@ function updateUI(data) {
   document.getElementById("pred_pm25").innerText = data.pred_pm25;
   document.getElementById("pred_uv").innerText = data.pred_uv;
 
-  document.getElementById("rec").innerText = data.rec1;
+  // Display recommendation / weather text
+  document.getElementById("rec").innerText = getWeatherText(data);
 }
 
+// Fetch Firebase every 2 sec
 async function fetchData() {
   try {
     const res = await fetch("https://weatherproject2026-default-rtdb.asia-southeast1.firebasedatabase.app/data.json");
     const data = await res.json();
-
-    if (data) {
-      updateUI(data);
-      document.getElementById("weatherText").innerText = getWeatherText(data);
-    }
+    if (data) updateUI(data);
   } catch (err) {
-    console.log("Error:", err);
+    console.log("Error fetching data:", err);
   }
 }
-
 setInterval(fetchData, 2000);
-
-fetchData()
-
+fetchData(); // run immediately
 </script>
 
 </body>
