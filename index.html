@@ -126,7 +126,8 @@ function updateUI(data) {
   document.getElementById("pred_uv").innerText = data.pred_uv;
 
   // Display recommendation / weather text
-  document.getElementById("rec").innerText = getWeatherText(data);
+  document.getElementById("rec").innerText = data.rec1 || "--";
+  document.getElementById("weatherText").innerText = getWeatherText(data);
 }
 
 // Fetch Firebase every 2 sec
