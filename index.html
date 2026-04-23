@@ -85,7 +85,7 @@ function getWeatherText(data) {
   let labels = [];
 
   // 1️⃣ Rain
-  if (data.humidity > 80 && data.temp < 35 && data.uv < 20)
+  if (data.humidity > 60 && data.temp < 35 && data.uv < 20)
     labels.push("🌧️ Rainy / bring umbrella");
 
   // 2️⃣ Air quality
