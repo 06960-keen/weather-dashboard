@@ -2,145 +2,90 @@
 <html>
 <head>
   <title>Weather Dashboard</title>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
     body {
-      font-family: Arial;
-      background: linear-gradient(to bottom, #3c6369, #0d172b);
-      color: white;
-      text-align: center;
-      margin: 0;
-      padding: 50px;
-    }
-    h1 {
-      margin-bottom: 50px;
-      font-size: 40px
-    }
-    #time {
-      font-size: 25px;
-      opacity: 0.8;
-      margin-bottom: 20px;
+    font-family: Arial;
+    background: linear-gradient(to bottom, #2c5364, #203a43, #0f2027);
+    color: white;
+    text-align: center;
     }
 
-    .container {
-      display: flex;
-      justify-content: center;
-      flex-wrap: wrap;
-    }
-
-    .card {
-      background: rgba(0,0,0,0.3);
-      margin: 10px;
-      padding: 20px;
-      border-radius: 15px;
-      font-size: 15px;
-      width: 250px;
-      backdrop-filter: blur(10px);
-    }
-
-    .big {
-      font-size: 30px;
-      font-weight: bold;
-    }
-
-    #weatherText {
-      font-size: 40px;
-      margin-bottom: 10px;
-    }
-
-    #rec {
-      font-size: 25px;
+    .title {
+      opacity: 0.7;
       margin-top: 10px;
     }
 
-    canvas {
-      margin-top: 30px;
-      max-width: 600px;
+    .time {
+      opacity: 0.5;
+      font-size: 14px;
+    }
+
+    .main {
+      margin: 30px 0;
+    }
+
+    .temp {
+      font-size: 80px;
+      font-weight: bold;
+    }
+
+    .weatherText {
+      font-size: 22px;
+      opacity: 0.9;
+    }
+
+    .recommendation {
+      margin: 20px;
+      font-size: 20px;
+    }
+
+    .cards {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      margin: 20px;
+    }
+
+    .card {
+      background: rgba(255,255,255,0.1);
+      padding: 15px;
+      border-radius: 10px;
+      width: 100px;
     }
   </style>
 </head>
 <body>
 
-<h1>🌦 Weather Dashboard</h1>
-<p id="time">--</p>
+  <h3 class="title">Weather Dashboard</h3>
+  <p class="time" id="time">--</p>
 
-<h2 id="weatherText">--</h2>
-
-<div class="container">
-  <div class="card">
-    <div>Temp</div>
-    <div id="temp" class="big">--</div>
+  <div class="main">
+    <div class="temp" id="temp">--°C</div>
+    <div class="weatherText" id="weatherText">--</div>
   </div>
 
-  <div class="card">
-    <div>Humidity</div>
-    <div id="humidity" class="big">--</div>
+  <div class="recommendation" id="rec">--</div>
+
+  <h3>Current</h3>
+  <div class="cards">
+    <div class="card">Humidity<br><span id="hum">--</span></div>
+    <div class="card">PM2.5<br><span id="pm">--</span></div>
+    <div class="card">UV<br><span id="uv">--</span></div>
   </div>
 
-  <div class="card">
-    <div>PM2.5</div>
-    <div id="pm25" class="big">--</div>
+  <h3>Prediction</h3>
+  <div class="cards">
+    <div class="card">Temp<br><span id="ptemp">--</span></div>
+    <div class="card">Humidity<br><span id="phum">--</span></div>
+    <div class="card">PM2.5<br><span id="ppm">--</span></div>
+    <div class="card">UV<br><span id="puv">--</span></div>
   </div>
 
-  <div class="card">
-    <div>UV</div>
-    <div id="uv" class="big">--</div>
-  </div>
-</div>
+  <script>
+  function getWeatherText(data) {
+  let tempHistory = [];
+  let labels = [];
 
-<h2>Prediction</h2>
-
-<div class="container">
-  <div class="card">
-    <div>Temp</div>
-    <div id="pred_temp" class="big">--</div>
-  </div>
-
-  <div class="card">
-    <div>Humidity</div>
-    <div id="pred_humidity" class="big">--</div>
-  </div>
-
-  <div class="card">
-    <div>PM2.5</div>
-    <div id="pred_pm25" class="big">--</div>
-  </div>
-
-  <div class="card">
-    <div>UV</div>
-    <div id="pred_uv" class="big">--</div>
-  </div>
-</div>
-
-<h2>Recommendation</h2>
-<p id="rec">--</p>
-
-<canvas id="weatherChart"></canvas>
-  
-<script>
-let tempHistory = [];
-let labels = [];
-let chart;
-
-function updateChart(data) {
-  const ctx = document.getElementById("weatherChart").getContext("2d");
-
-  if (chart) chart.destroy();
-
-  chart = new Chart(ctx, {
-    type: "line",
-    data: {
-      labels: ["Temp", "Humidity", "PM2.5", "UV"],
-      datasets: [{
-        label: "Current Data",
-        data: [data.temp, data.humidity, data.pm25, data.uv]
-      }]
-    }
-  });
-}
-
-function getWeatherText(data) {
-let labels = [];
   // 1️⃣ Rain
   if (data.humidity > 60 && data.uv < 20)
     labels.push("🌧️ Rainy");
@@ -173,53 +118,43 @@ let labels = [];
 
   // Join multiple labels
   return labels.join(" | ");
-}
-
-// Update UI
-function updateUI(data) {
-  document.getElementById("temp").innerText = data.temp;
-  document.getElementById("humidity").innerText = data.humidity;
-  document.getElementById("pm25").innerText = data.pm25;
-  document.getElementById("uv").innerText = data.uv;
-
-  document.getElementById("pred_temp").innerText = data.pred_temp;
-  document.getElementById("pred_humidity").innerText = data.pred_humidity;
-  document.getElementById("pred_pm25").innerText = data.pred_pm25;
-  document.getElementById("pred_uv").innerText = data.pred_uv;
-
-  // Display recommendation / weather text
-  let recs = [data.rec1, data.rec2, data.rec3].filter(Boolean);
-  document.getElementById("rec").innerText = recs.join(" | ");
-  document.getElementById("weatherText").innerText = getWeatherText(data);
-
-  // Update time
-  document.getElementById("time").innerText =
-    "Last update: " + new Date().toLocaleTimeString();
-
-  // Add to graph
-  tempHistory.push(data.temp);
-  labels.push(new Date().toLocaleTimeString());
-
-  if (tempHistory.length > 10) {
-    tempHistory.shift();
-    labels.shift();
   }
+  function updateUI(data) {
+    document.getElementById("temp").innerText = data.temp.toFixed(1) + "°C";
+    document.getElementById("hum").innerText = data.humidity;
+    document.getElementById("pm").innerText = data.pm25;
+    document.getElementById("uv").innerText = data.uv;
 
-  updateChart(data);
-}
+    document.getElementById("ptemp").innerText = data.pred_temp.toFixed(1);
+    document.getElementById("phum").innerText = data.pred_humidity.toFixed(1);
+    document.getElementById("ppm").innerText = data.pred_pm25.toFixed(1);
+    document.getElementById("puv").innerText = data.pred_uv.toFixed(1);
 
-// Fetch Firebase every 2 sec
-async function fetchData() {
-  try {
-    const res = await fetch("https://weatherproject2026-default-rtdb.asia-southeast1.firebasedatabase.app/data.json");
-    const data = await res.json();
-    if (data) updateUI(data);
-  } catch (err) {
-    console.log("Error fetching data:", err);
+    // weather text
+    document.getElementById("weatherText").innerText = getWeatherText(data);
+
+    // recommendation (combine multiple)
+    let recText = data.rec1 || "";
+    if (data.rec2) recText += " | " + data.rec2;
+    if (data.rec3) recText += " | " + data.rec3;
+
+    document.getElementById("rec").innerText = recText;
+
+    // time
+    document.getElementById("time").innerText = "Last update: " + new Date().toLocaleTimeString();
+    }
+    // Fetch Firebase every 2 sec
+    async function fetchData() {
+      try {
+        const res = await fetch("https://weatherproject2026-default-rtdb.asia-southeast1.firebasedatabase.app/data.json");
+        const data = await res.json();
+        if (data) updateUI(data);
+    } catch (err) {
+        console.log("Error fetching data:", err);
+    }
   }
-}
-setInterval(fetchData, 2000);
-fetchData(); // run immediately
+  setInterval(fetchData, 2000);
+  fetchData(); // run immediately
 </script>
 
 </body>
