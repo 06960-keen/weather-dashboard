@@ -2,91 +2,127 @@
 <html>
 <head>
   <title>Weather Dashboard</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
     body {
-      font-family: Georgia;
-      background: #111;
-      color: #fff;
+      font-family: Arial;
+      background: linear-gradient(to bottom, #1e3c72, #2a5298);
+      color: white;
       text-align: center;
+      margin: 0;
+      padding: 20px;
     }
+    h1 {
+      margin-bottom: 5px;
+    }
+    #time {
+      font-size: 14px;
+      opacity: 0.8;
+      margin-bottom: 20px;
+    }
+
+    .container {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
     .card {
-      background: #222;
+      background: rgba(0,0,0,0.3);
       margin: 10px;
       padding: 20px;
-      border-radius: 10px;
-      display: inline-block;
-      width: 200px;
+      border-radius: 15px;
+      width: 150px;
+      backdrop-filter: blur(10px);
     }
-    h2 { margin: 0; }
+
+    .big {
+      font-size: 28px;
+      font-weight: bold;
+    }
+
+    #weatherText {
+      font-size: 22px;
+      margin-bottom: 10px;
+    }
 
     #rec {
-      font-size: 24px;
-      font-weight: bold;
+      font-size: 20px;
+      margin-top: 10px;
+    }
+
+    canvas {
+      margin-top: 30px;
+      max-width: 600px;
     }
   </style>
 </head>
 <body>
 
 <h1>🌦 Weather Dashboard</h1>
+<p id="time">--</p>
 
 <h2 id="weatherText">--</h2>
 
-<div class="card">
-  <h2>Temp</h2>
-  <p id="temp">--</p>
-</div>
+<div class="container">
+  <div class="card">
+    <div>Temp</div>
+    <div id="temp" class="big">--</div>
+  </div>
 
-<div class="card">
-  <h2>Humidity</h2>
-  <p id="humidity">--</p>
-</div>
+  <div class="card">
+    <div>Humidity</div>
+    <div id="humidity" class="big">--</div>
+  </div>
 
-<div class="card">
-  <h2>PM2.5</h2>
-  <p id="pm25">--</p>
-</div>
+  <div class="card">
+    <div>PM2.5</div>
+    <div id="pm25" class="big">--</div>
+  </div>
 
-<div class="card">
-  <h2>UV</h2>
-  <p id="uv">--</p>
+  <div class="card">
+    <div>UV</div>
+    <div id="uv" class="big">--</div>
+  </div>
 </div>
-
-<hr>
 
 <h2>Prediction</h2>
 
-<div class="card">
-  <h2>Temp</h2>
-  <p id="pred_temp">--</p>
-</div>
+<div class="container">
+  <div class="card">
+    <div>Temp</div>
+    <div id="pred_temp" class="big">--</div>
+  </div>
 
-<div class="card">
-  <h2>Humidity</h2>
-  <p id="pred_humidity">--</p>
-</div>
+  <div class="card">
+    <div>Humidity</div>
+    <div id="pred_humidity" class="big">--</div>
+  </div>
 
-<div class="card">
-  <h2>PM2.5</h2>
-  <p id="pred_pm25">--</p>
-</div>
+  <div class="card">
+    <div>PM2.5</div>
+    <div id="pred_pm25" class="big">--</div>
+  </div>
 
-<div class="card">
-  <h2>UV</h2>
-  <p id="pred_uv">--</p>
+  <div class="card">
+    <div>UV</div>
+    <div id="pred_uv" class="big">--</div>
+  </div>
 </div>
-
-<hr>
 
 <h2>Recommendation</h2>
 <p id="rec">--</p>
 
+<canvas id="tempChart"></canvas>
+  
 <script>
 function getWeatherText(data) {
+  let tempHistory = [];
   let labels = [];
 
   // 1️⃣ Rain
-  if (data.humidity > 60 && data.temp < 35 && data.uv < 20)
-    labels.push("🌧️ Rainy / bring umbrella");
+  if (data.humidity > 60 && data.uv < 20)
+    labels.push("🌧️ Rainy");
 
   // 2️⃣ Air quality
   if (data.pm25 > 100)
@@ -102,9 +138,9 @@ function getWeatherText(data) {
 
   // 4️⃣ Temperature
   if (data.temp > 35)
-    labels.push("💧 Stay hydrated");
+    labels.push("🥵 Hot");
   else if (data.temp < 27)
-    labels.push("🧥 Chilly / wear warm clothes");
+    labels.push("🧥 Chilly");
 
   // 5️⃣ Humidity / cloudy
   if (data.humidity > 60)
@@ -133,6 +169,21 @@ function updateUI(data) {
   // Display recommendation / weather text
   document.getElementById("rec").innerText = data.rec1 || "--";
   document.getElementById("weatherText").innerText = getWeatherText(data);
+
+  // Update time
+  document.getElementById("time").innerText =
+    "Last update: " + new Date().toLocaleTimeString();
+
+  // Add to graph
+  tempHistory.push(data.temp);
+  labels.push(new Date().toLocaleTimeString());
+
+  if (tempHistory.length > 10) {
+    tempHistory.shift();
+    labels.shift();
+  }
+
+  chart.update();
 }
 
 // Fetch Firebase every 2 sec
