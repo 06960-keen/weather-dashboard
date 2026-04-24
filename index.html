@@ -118,10 +118,28 @@
 <canvas id="tempChart"></canvas>
   
 <script>
-function getWeatherText(data) {
-  let tempHistory = [];
-  let labels = [];
+let tempHistory = [];
+let labels = [];
 
+const ctx = document.getElementById('tempChart').getContext('2d');
+
+const chart = new Chart(ctx, {
+  type: 'line',
+  data: {
+    labels: labels,
+    datasets: [{
+      label: 'Temperature',
+      data: tempHistory,
+      borderWidth: 2
+    }]
+  },
+  options: {
+    responsive: true
+  }
+});
+
+function getWeatherText(data) {
+let labels = [];
   // 1️⃣ Rain
   if (data.humidity > 60 && data.uv < 20)
     labels.push("🌧️ Rainy");
@@ -169,7 +187,8 @@ function updateUI(data) {
   document.getElementById("pred_uv").innerText = data.pred_uv;
 
   // Display recommendation / weather text
-  document.getElementById("rec").innerText = data.rec1 || "--";
+  let recs = [data.rec1, data.rec2, data.rec3].filter(Boolean);
+  document.getElementById("rec").innerText = recs.join(" | ");
   document.getElementById("weatherText").innerText = getWeatherText(data);
 
   // Update time
