@@ -115,28 +115,29 @@
 <h2>Recommendation</h2>
 <p id="rec">--</p>
 
-<canvas id="tempChart"></canvas>
+<canvas id="weatherChart"></canvas>
   
 <script>
 let tempHistory = [];
 let labels = [];
+let chart;
 
-const ctx = document.getElementById('tempChart').getContext('2d');
+function updateChart(data) {
+  const ctx = document.getElementById("weatherChart").getContext("2d");
 
-const chart = new Chart(ctx, {
-  type: 'line',
-  data: {
-    labels: labels,
-    datasets: [{
-      label: 'Temperature',
-      data: tempHistory,
-      borderWidth: 2
-    }]
-  },
-  options: {
-    responsive: true
-  }
-});
+  if (chart) chart.destroy();
+
+  chart = new Chart(ctx, {
+    type: "line",
+    data: {
+      labels: ["Temp", "Humidity", "PM2.5", "UV"],
+      datasets: [{
+        label: "Current Data",
+        data: [data.temp, data.humidity, data.pm25, data.uv]
+      }]
+    }
+  });
+}
 
 function getWeatherText(data) {
 let labels = [];
@@ -204,7 +205,7 @@ function updateUI(data) {
     labels.shift();
   }
 
-  chart.update();
+  updateChart(data);
 }
 
 // Fetch Firebase every 2 sec
