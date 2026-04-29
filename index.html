@@ -90,6 +90,7 @@
   </div>
 
   <h3>Prediction</h3>
+  <div class="weatherText" id="predText">--</div>
   <div class="cards">
     <div class="card">Temp<br><span id="ptemp">--</span></div>
     <div class="card">Humid<br><span id="phum">--</span></div>
@@ -135,6 +136,42 @@
   // Join multiple labels
   return labels.join(" | ");
   }
+
+  function getPredictionText(data) {
+  let labels = [];
+
+  // Rain (predicted)
+  if (data.pred_humidity > 60 && data.pred_uv < 20)
+    labels.push("🌧️ Possible rain");
+
+  // Air quality
+  if (data.pred_pm25 > 100)
+    labels.push("😷 Very polluted");
+  else if (data.pred_pm25 > 50)
+    labels.push("😷 Polluted");
+
+  // UV
+  if (data.pred_uv > 25)
+    labels.push("🔥 Extreme UV");
+  else if (data.pred_uv > 15)
+    labels.push("☀️ Sunny");
+
+  // Temperature
+  if (data.pred_temp > 35)
+    labels.push("🥵 Hot");
+  else if (data.pred_temp < 27)
+    labels.push("🧥 Chilly");
+
+  // Humidity/cloudy
+  if (data.pred_humidity > 60)
+    labels.push("☁️ Humid / cloudy");
+
+  if (labels.length === 0)
+    labels.push("🙂 Normal later");
+
+  return labels.join(" | ");
+  }
+
   function updateUI(data) {
     document.getElementById("temp").innerText = data.temp.toFixed(1) + "°C";
     document.getElementById("hum").innerText = data.humidity;
@@ -148,6 +185,7 @@
 
     // weather text
     document.getElementById("weatherText").innerText = getWeatherText(data);
+    document.getElementById("predText").innerText = getPredictionText(data);
 
     // recommendation (combine multiple)
     let recText = data.rec1 || "";
